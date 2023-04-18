@@ -6,8 +6,8 @@ const { Vec2D, Rect } = toxi.geom;
 
 let physics;
 
-let particleA, particleB, particleC;
-let spring;
+let particles = [];
+let springs = [];
 
 function setup() {
     createCanvas(640, 360);
@@ -20,23 +20,13 @@ function setup() {
     let bounds = new Rect(0,0,width,height)
     physics.setWorldBounds(bounds);
 
-    particleA = new VerletParticle2D(320, 100);
-    physics.addParticle(particleA);
+    particles.push(new Particle(320, 100));
+    particles.push(new Particle(320, 200));
+    particles.push(new Particle(420, 150));
 
-    particleB = new VerletParticle2D(320, 200);
-    physics.addParticle(particleB);
-
-    particleC = new VerletParticle2D(420, 150);
-    physics.addParticle(particleC);
-
-    spring1 = new VerletSpring2D(particleA, particleB, 100, 0.5);
-    physics.addSpring(spring1);
-
-    spring2 = new VerletSpring2D(particleB, particleC, 100, 0.5);
-    physics.addSpring(spring2);
-
-    spring3 = new VerletSpring2D(particleA, particleC, 100, 0.5);
-    physics.addSpring(spring3);
+    springs.push(new Spring(particles[0], particles[1], 100, 0.5));
+    springs.push(new Spring(particles[1], particles[2], 100, 0.5));
+    springs.push(new Spring(particles[0], particles[2], 100, 0.5));
 }
 
 
@@ -45,17 +35,17 @@ function draw() {
 
     physics.update();
 
-    fill(0);
-    circle(particleA.x, particleA.y, 16);
-
-    fill(0);
-    circle(particleB.x, particleB.y, 16);
-
-    fill(0);
-    circle(particleC.x, particleC.y, 16);
-
-    line(particleA.x, particleA.y, particleB.x, particleB.y);
-    line(particleA.x, particleA.y, particleC.x, particleC.y);
-    line(particleC.x, particleC.y, particleB.x, particleB.y);
+    for (let particle of particles) {
+        particle.show();
+    }
+    for (let spring of springs) {
+        spring.show();
+    }
+    if (mouseIsPressed) {
+        particles[0].lock();
+        particles[0].x = mouseX;
+        particles[0].y = mouseY;
+        particles[0].unlock();
+    }
 }
   
